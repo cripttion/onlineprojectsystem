@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    /* background-color: #EAE7DC; */
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+body{
+    background-color: rgb(243, 248, 246);
+}
+.upCard {
+    box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 1px, rgba(0, 0, 0, 0.07) 0px 2px 2px, rgba(0, 0, 0, 0.07) 0px 4px 4px, rgba(0, 0, 0, 0.07) 0px 8px 8px, rgba(0, 0, 0, 0.07) 0px 16px 16px;
+}
+.sidebar{
+   
+    z-index:2;
+}
+.home{
+    z-index:1;
+}
+.open {
+   margin-left: 10px;
+}
+
+.close {
+    margin-left: -15%;
+}
+@media screen and (max-width:1024px) {
+    .close{
+        margin-left:-12%;
+    }
+}
+@media screen and (max-width:820px) {
+    .close{
+        margin-left: -86%;
+    }
+}
+@media only screen and (max-width: 440px) {
+    
+    .open {
+        margin-left: 10px;
+    }
+
+    .close {
+        margin-left: 30%;
+    }
+}
+
+
+
+.comeDown{
+    animation:cd 1s ease-out ;
+}
+
+@keyframes cd {
+    0%{
+        transform: translateY(0);
+    }
+    50%{
+        transform: translateY(10px);
+    }
+    100%{
+        transform: translatY(0);
+    }
+}
+
+.hoverButtons:hover{
+    animation: changeColor 2s linear ;
+}
+
+@keyframes changeColor {
+    from{
+            background-color: #2e5caf;
+    }
+to{
+        background-color: gray;
+    }
+ 
+}
+
+
+
