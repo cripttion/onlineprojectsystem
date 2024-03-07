@@ -6,11 +6,11 @@ import YearSemester from "../Component/YearSemester";
 import Select from "react-select";
 import * as XLSX from "xlsx";
 function Projectdata() {
+  const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [guide, setGuideData] = useState([]);
   const [reviewer, setReviewerData] = useState([]);
-  const navigate = useNavigate();
-
+  const[projectID,setProjectID] = useState("");
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -31,6 +31,7 @@ function Projectdata() {
     }
   };
 
+
   // console.log("The vlue",reviewer);
 
   // const findReviewerById = (reviewerId) => {
@@ -39,7 +40,7 @@ function Projectdata() {
   // };
   const handleShowClick = (pID) => {
     console.log(pID);
-    navigate("/projects/myProject", {
+    navigate(`/projects/${pID}`, {
       state: { ProjectId: pID, xtemp: "pData" },
     });
   };
@@ -74,7 +75,6 @@ function Projectdata() {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
     XLSX.writeFile(workbook, "ProjectData.xlsx");
   };
-
   return (
     <Layouts>
       <div className="container mx-auto px-4 mt-8">
@@ -135,8 +135,14 @@ function Projectdata() {
             Get Project Data
           </button>
         </form>
+        
         <button className="bg-blue-500 text-white py-1 px-2 rounded-md" onClick={() => downloadExcel(data.projects)}>Download As Excel</button>
-        <table className="min-w-full bg-white border border-gray-300 mt-10">
+        <div className="flex flex-row mt-5 gap-4">
+          <input className="outline-none p-2 border-gray-300 border rounded-xl" type="text" placeholder="Serach:ProjectID" onChange={(e)=>setProjectID(e.target.value.toUpperCase())} />
+          <button className="bg-blue-700 p-2 text-white rounded-xl" onClick={()=>navigate(`/projects/${projectID}`)}>Search</button>
+        </div>
+        <div className="overflow-auto" style={{ maxHeight: "70vh" }}>
+        <table className="min-w-full max-h-screen bg-white border border-gray-300 mt-10">
           <thead>
             <tr>
               <th className="py-2 px-4 border-b text-left">SN</th>
@@ -160,11 +166,11 @@ function Projectdata() {
                   <td className="py-2 px-4 border-b text-left">
                     {prData.ProjectID}
                   </td>
-                  <td className="py-2 px-4 border-b text-left">
+                  {/* <td className="py-2 px-4 border-b text-left">
                     {prData.superviorName}
-                  </td>
+                  </td> */}
                   <td className="py-2 px-4 border-b text-left">
-                    {prData.Name}
+                    {prData.Name + " - "+prData.AdmissionNumber}
                   </td>
                   <td className="py-2 px-4 border-b text-left">
                     {prData.Phone}
@@ -186,6 +192,9 @@ function Projectdata() {
                       prData.SupervisorCabin}
                   </td>
                   <td className="py-2 px-4 border-b text-left">
+                    {prData.ProjectTitle}
+                  </td>
+                  <td className="py-2 px-4 border-b text-left">
                     <button
                       onClick={() => handleShowClick(prData.ProjectID)}
                       className="bg-blue-500 text-white py-1 px-2 rounded-md"
@@ -198,6 +207,7 @@ function Projectdata() {
             })}
           </tbody>
         </table>
+        </div>
       </div>
     </Layouts>
   );

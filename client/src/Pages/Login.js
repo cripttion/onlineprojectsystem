@@ -17,7 +17,7 @@ function Login() {
   });
   const options = [
     { value: "Admin", label: "Admin" },
-    { value: "Teacher", label: "Professor" },
+    { value: "Teacher", label: "Faculty" },
     { value: "Student", label: "Student" },
   ];
   useEffect(() => {

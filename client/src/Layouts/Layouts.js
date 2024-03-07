@@ -11,16 +11,16 @@ function Layouts({ children }) {
   const receiveDataFromSideNav = (data) => {
     setIsSidebarOpen(data);
   };
-console.log(isSidebarOpen);
   return (
    <div className='MainPage'>
-          <div className='topbar'>
-            <div ></div>
+          <div className='topbar fixed w-full z-10'>
+         
             <Topnav openData={isSidebarOpen} setOpenData={receiveDataFromSideNav}/>
             </div>
-          <div className='centerElement flex flex-row gap-10 relative bg-blue-100'>
-            <div className='top-0 left-0 fixed  z-10'><SideNav sendDataToLayout={receiveDataFromSideNav} openData={isSidebarOpen} /></div>
-            <div className={`${isSidebarOpen?'w-full':'w-full mx-20'}`}>{ children }</div>
+
+          <div className='centerElement flex flex-row gap-10 bg-blue-100'>
+            <div className='fixed z-10'><SideNav sendDataToLayout={receiveDataFromSideNav} openData={isSidebarOpen} /></div>
+            <div className={`${isSidebarOpen?'w-full':'w-full lg:mx-20 mx-2'} h-screen childMain overflow-auto mt-10`}>{ children }</div>
           </div>
           <div className='footer'><Footer /></div>
    </div>

@@ -11,7 +11,6 @@ function Home() {
   useEffect(() => {
     getfilteredHomeData();
   }, [location]);
-  console.log(filteredHomeDatas);
   const getfilteredHomeData = () => {
     const { pathname } = location;
 

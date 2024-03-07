@@ -2,27 +2,44 @@ import { CheckCircle } from 'lucide-react';
 import React from 'react'
 import axios from 'axios';
 import {toast} from 'react-toastify';
+import Swal from 'sweetalert2'
+
 function Approve(props) {
     const projectID = props.projectId;
     const handleApproveClick = async () => {
-        try {
-            const response = await axios.post(`http://localhost:5000/projects/changeprojectStatus/${projectID}`, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            if (response.status === 200) {
-                toast.success("Project Status Changed");
+        Swal.fire({
+            title: "Have you read the Project title and Abstract , If yes then approve the project",
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: "Approve",
+            denyButtonText: `Don't Approve`
+          }).then(async(result) => {
+            if (result.isConfirmed) {
+
+                try {
+                    const response = await axios.post(`http://localhost:5000/projects/changeprojectStatus/${projectID}`, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    if (response.status === 200) {
+                        Swal.fire("Approved!", "", "success");
+                    }
+                    if (response.status === 404) {
+                        Swal.fire('Project Id not found',"error");
+                    }
+                }catch (error) {
+                    if (error.response.status === 500) {
+                        toast.error('Unable to approve. Server Error');
+                    }
             }
-            if (response.status === 404) {
-                toast.info('Project Id not found');
+            }else if (result.isDenied) {
+              Swal.fire("Changes are not saved", "", "info");
             }
-        } catch (error) {
-            if (error.response.status === 500) {
-                toast.error('Unable to approve. Server Error');
-            }
-        }
-    }
+          });
+        
+        } 
+   
     
 
   return (

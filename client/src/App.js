@@ -13,7 +13,11 @@ import MyGuide from './Pages/Student/MyGuide';
 import MyReviewer from './Pages/Student/MyReviewer';
 import PageNotFound from './Pages/PageNotFound';
 import Projectdata from './Pages/Admin/ProjectData/Projectdata';
-
+import UpdateGuide from './Pages/Admin/Guide/UpdateGuide';
+import ProjectSetting from './Pages/Admin/ProjectData/ProjectSetting';
+import NotRegistered from './Pages/Admin/Student/NotRegistered';
+import ProjectMarks from './Pages/Admin/ProjectData/ProjectMarks';
+import SupervisiorDetails from './Pages/Teacher/SupervisiorDetails';
 const isAuthenticated = () => {
   const loginStatus = localStorage.getItem('isLogedIn');
   return loginStatus === 'true';
@@ -52,13 +56,18 @@ const App = () => {
         <Route path="/a/addStudent" element={<PrivateRoute element={<AddStudent />} requiredRoles={['Admin']} />} />
         <Route path="/a/addTeacher" element={<PrivateRoute element={<AddTeacher />} requiredRoles={['Admin']} />} />
         <Route path="/project/createProject" element={<PrivateRoute element={<CreateProject />} requiredRoles={['Student', 'Admin', 'Teacher']} />} />
-        <Route path="/projects/myProject" element={<PrivateRoute element={<MyProject />} requiredRoles={['Student', 'Admin', 'Teacher']} />} />
+        <Route path="/projects/myProject/:Student" element={<PrivateRoute element={<MyProject />} requiredRoles={['Student', 'Admin', 'Teacher']} />} />
         <Route path="/projects/myProject" element={<PrivateRoute element={<MyProject />} requiredRoles={['Student', 'Admin', 'Teacher']} />} />
         <Route path="/g/allProjects" element={<PrivateRoute element={<ProjectToGuide />} requiredRoles={['Admin', 'Teacher']} />} />
         <Route path="/r/allProjects" element={<PrivateRoute element={<ProjectToReview />} requiredRoles={['Admin', 'Teacher']} />} />
         <Route path="/projects/myguide" element={<PrivateRoute element={<MyGuide />} requiredRoles={['Student']} />} />
         <Route path="/projects/myreviewer" element={<PrivateRoute element={<MyReviewer />} requiredRoles={['Student']} />} />
         <Route path="/projects/projectData" element={<PrivateRoute element={<Projectdata />} requiredRoles={['Admin']} />} />
+        <Route path="/a/updateGuide" element={<PrivateRoute element={<UpdateGuide />} requiredRoles={['Admin']} />} />
+        <Route path="/projects/:projectID" element={<PrivateRoute element={<ProjectSetting />} requiredRoles={['Admin']} />} />
+        <Route path="/a/not-registered" element={<PrivateRoute element={<NotRegistered />} requiredRoles={['Admin']} />} />
+        <Route path="/a/marks-setting" element={<PrivateRoute element={<ProjectMarks />} requiredRoles={['Admin']} />} />
+        <Route path="/a/allocated-guide" element={<PrivateRoute element={<SupervisiorDetails />} requiredRoles={['Admin']} />} />
 
        {/* Temproty route000 */}
        <Route path="/Shome" element={<PrivateRoute element={<Home />} requiredRoles={['Admin']} />} />

@@ -21,9 +21,9 @@ return sequelize.define('ProjectDocument', {
     defaultValue:'Not uploaded'
   },
   ProjectAbstract: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    defaultValue:'Not uploaded'
+    type: DataTypes.TEXT('long'),
+    allowNull: true,
+    
   },
   ProjectPresentaion: {
     type: DataTypes.STRING,

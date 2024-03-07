@@ -52,6 +52,7 @@ const Project = (sequelize) => {
         allowNull: false,
         defaultValue: "######",
       },
+      
     },
     {
       // Disable timestamps

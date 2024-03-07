@@ -39,6 +39,7 @@ function DocumentStatus(props) {
     getProjectData();
     // getData();
   },[])
+  console.log(data);
   const onViewFile=(value)=>{
     window.open(value, '_blank', 'noreferrer');
   }
@@ -48,17 +49,21 @@ const [openAb,setopenAb] = useState(false);
   }
   // console.log(data);
   return (
-    <div className='mt-10 mx-10 relative'>
-      
-     {openAb && <div className='absolute -top-96 w-full h-fit bg-white upCard p-5 ' style={{width:'100%',height:'fit-content'}}>
-     <div className='relative flex flex-col gap-10 justify-center items-center'>
+    <>
+    {openAb && <div className='absolute top-0 -ml-20 h-screen bg-black bg-opacity-25 p-10 flex justify-center items-center'>
+      <div className='bg-white p-5 mr-20 ml-20 relative'>
+     <div className='flex flex-col gap-10 justify-center items-center'>
       <h1 className='text-3xl font-bold'>{data&&data[0].ProjectTitle}</h1>
       <div className='bg-gray-400 w-full' style={{height:'1px'}}> </div>
       <p>{data&&data[0].ProjectAbstract}</p>
       </div>
       <button className='absolute top-5 right-2' onClick={openAbstract}><X /></button>
       </div>
+      </div>
      }
+    <div className='mt-10 mx-10 '>
+      
+
       <table className="min-w-full bg-cardColor shadow-md  rounded-md overflow-hidden">
         <thead className="bg-color1 text-black">
           <tr>
@@ -134,6 +139,7 @@ const [openAb,setopenAb] = useState(false);
         </tbody>
       </table>
     </div>
+    </>
   );
 }
 

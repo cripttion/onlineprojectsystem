@@ -9,7 +9,9 @@ const xlsx = require("xlsx");
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 const Student = require("./../models/StudentList")(sequelize);
- const isStudentValid = require('./../middleware/studentAuth')
+ const isStudentValid = require('./../middleware/studentAuth');
+const { notRegistered } = require('../utility/Query');
+const ProjectMember = require('../models/ProjectMember');
 router.get("/allStudents", async (req, res) => {
     try {
       const students = await Student.findAll();
@@ -134,31 +136,42 @@ router.get("/allStudents", async (req, res) => {
   
   router.get('/studentNotRegistered', async (req, res) => {
     const { year, semester } = req.query;
+   
     try {
-      const data = await sequelize.query(
-        `SELECT s.AdmissionNumber, s.Name 
-         FROM Students AS s 
-         WHERE s.Year = :year 
-         AND s.Semester = :semester
-         AND NOT EXISTS (
-           SELECT 1 
-           FROM ProjectMembers AS pm 
-           JOIN Projects AS p ON pm.ProjectID = p.ProjectID
-           WHERE s.AdmissionNumber = pm.StudentID 
-           AND p.Year = :year 
-           AND p.Semester = :semester
-         );`,
-        {
-          replacements: { year, semester },
-          type: sequelize.QueryTypes.SELECT,
-        }
-      );
-  
-      res.json({ message: "Successfully fetched the data", data });
+       
+      const query= notRegistered(year,semester);
+       
+
+        const data = await sequelize.query(
+            query,
+            {
+                replacements: { year,semester },
+                type: sequelize.QueryTypes.SELECT,
+            }
+        );
+
+        res.json({ message: "Successfully fetched the data", data });
     } catch (error) {
-      res.status(500).json({ message: 'Unable to find' });
+        res.status(500).json({ message: 'Unable to find' });
     }
-  });
-  
+});
+
+router.delete('/delete-student/:admissionNumber', async (req, res) => {
+  const admissionNumber = req.params.admissionNumber;
+  try {
+    const query = `DELETE FROM ProjectMembers WHERE StudentID = :studentID`;
+    const rowaffected  = await sequelize.query(query, {
+      replacements: {
+        studentID: admissionNumber,
+      },
+      type: sequelize.QueryTypes.DELETE,
+    });
+    res.status(200).json({ message: "Data deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting data:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 module.exports = router;

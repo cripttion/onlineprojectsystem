@@ -3,15 +3,18 @@ import Layouts from "../../Layouts/Layouts";
 import axios from "axios";
 import { PlusCircle } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import Approve from "../Teacher/Components/Approve";
 import { useNavigate } from "react-router-dom";
 import AddTitle from "./Components/AddTitle";
 import DocumentStatus from "./Components/DocumentStatus";
 import UpdateMarks from "../Teacher/Components/UpdateMarks";
 import AddDocumentLink from "./Components/AddDocumentLink";
+import MarksDetails from "../Admin/ProjectData/components/MarksDetails";
+import Swal from "sweetalert2";
 function MyProject(props) {
   const navigate = useNavigate();
+  const documentupdateRole = useParams();
   const location = useLocation();
   const [projectData, setprojectData] = useState();
   const userData = sessionStorage.getItem("sessionData");
@@ -24,26 +27,27 @@ function MyProject(props) {
   const handleSelectChange = (event) => {
     setSelectedAdmissionNumber(event.target.value);
   };
-  console.log(selectedAdmissionNumber);
+  // console.log(selectedAdmissionNumber);
   let admissionNumber;
   if (userData) {
     admissionNumber = JSON.parse(userData);
   }
-  console.log(admissionNumber);
+  // console.log(admissionNumber);
 
   const [studentData, setStudentData] = useState();
   let myData;
   const [userID, setUserID] = useState();
   let temp;
-  if(sessionStorage.getItem("role")==="Admin"){
-        temp = location.state && location.state.userI;
-        }
+  if (sessionStorage.getItem("role") === "Admin") {
+    temp = location.state && location.state.userI;
+  }
   const yourData = location.state && location.state.ProjectId;
   myData = yourData;
   const roleId = location.state && location.state.roleID;
+  // console.log(roleId);
   let x;
   const xtemp = location.state && location.state.xtemp;
-        x =xtemp;
+  x = xtemp;
   //  console.log(roleValue);
   // / Set userID based on role
   let userI;
@@ -51,13 +55,10 @@ function MyProject(props) {
     userI = admissionNumber && admissionNumber.data[0].AdmissionNumber;
   } else if (sessionStorage.getItem("role") === "Teacher") {
     userI = myData;
-  }else if(sessionStorage.getItem("role")==="Admin" && x!=='pData')
-  {
-
-      // console.log("the llocation value is",temp);
-      userI = temp;
-  }
-  else{
+  } else if (sessionStorage.getItem("role") === "Admin" && x !== "pData") {
+    // console.log("the llocation value is",temp);
+    userI = temp;
+  } else {
     userI = myData;
   }
   // console.log(userI);
@@ -70,7 +71,8 @@ function MyProject(props) {
         const response = await axios.get(
           `http://localhost:5000/projects/pdSpecific/?userID=${userI}&role=${sessionStorage.getItem(
             "role"
-          )}`,{
+          )}`,
+          {
             params: { xData: x },
             // Other options like headers can be added here
           }
@@ -86,9 +88,11 @@ function MyProject(props) {
 
     getProjectData();
   }, [userI]);
- 
 
   const handleAddMember = async () => {
+    if (roleId !== "Student") {
+      return Swal.fire("You are not allowed to add student", "", "error");
+    }
     try {
       // Replace with the actual admission number
 
@@ -109,7 +113,8 @@ function MyProject(props) {
       const updatedProjectData = await axios.get(
         `http://localhost:5000/projects/pdSpecific/?userID=${userI}&role=${sessionStorage.getItem(
           "role"
-        )}`,{
+        )}`,
+        {
           params: { xData: x },
           // Other options like headers can be added here
         }
@@ -117,7 +122,6 @@ function MyProject(props) {
       setprojectData(updatedProjectData.data.data);
 
       // Reset the form or any other state if needed
-    
     } catch (error) {
       // Handle errors
       console.error("Error adding member:", error);
@@ -128,7 +132,8 @@ function MyProject(props) {
       const updatedProjectData = await axios.get(
         `http://localhost:5000/projects/pdSpecific/?userID=${userI}&role=${sessionStorage.getItem(
           "role"
-        )}`,{
+        )}`,
+        {
           params: { xData: x },
           // Other options like headers can be added here
         }
@@ -140,30 +145,30 @@ function MyProject(props) {
       console.log(error);
     }
   };
-  const handleUpdateMarks = async(data)=>{
-   
-      try {
-        const updatedProjectData = await axios.get(
-          `http://localhost:5000/projects/pdSpecific/?userID=${userID}&role=${sessionStorage.getItem(
-            "role"
-          )}`,{
-            params: { xData: x },
-            // Other options like headers can be added here
-          }
-        );
-  
-        setprojectData(updatedProjectData.data.data);
-      } catch (error) {
-        console.log(error);
-      }
-    
-  }
+  const handleUpdateMarks = async (data) => {
+    try {
+      const updatedProjectData = await axios.get(
+        `http://localhost:5000/projects/pdSpecific/?userID=${userID}&role=${sessionStorage.getItem(
+          "role"
+        )}`,
+        {
+          params: { xData: x },
+          // Other options like headers can be added here
+        }
+      );
+
+      setprojectData(updatedProjectData.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleClick = async (index) => {
-    console.log("hanle clicked",projectData&&projectData[0].Year);
     try {
       const response = await axios.get(
-        `http://localhost:5000/s/studentNotRegistered?year=${projectData&&projectData[0].Year}&semester=${projectData&&projectData[0]?.Semester}`
+        `http://localhost:5000/s/studentNotRegistered?year=${
+          projectData && projectData[0].Year
+        }&semester=${projectData && projectData[0]?.Semester}`
       );
       setStudentData(response.data.data);
     } catch (error) {
@@ -176,7 +181,11 @@ function MyProject(props) {
   const handleAddClick = (value) => {
     setaddClick(value);
   };
-  const [clickedCards, setClickedCards] = useState(Array(  projectData && projectData[0] && projectData[0].ProjectNumber).fill(false));
+  const [clickedCards, setClickedCards] = useState(
+    Array(projectData && projectData[0] && projectData[0].ProjectNumber).fill(
+      false
+    )
+  );
 
   const renderCards = () => {
     const numberOfCards =
@@ -208,7 +217,7 @@ function MyProject(props) {
         ) : (
           <p>
             {!isCardClicked && (
-              <button onClick={()=>handleClick(i)}>
+              <button onClick={() => handleClick(i)}>
                 <PlusCircle size={100} strokeWidth={1} />
                 Add member
               </button>
@@ -223,17 +232,23 @@ function MyProject(props) {
                   <option value="" disabled>
                     Select Admission Number
                   </option>
-                  {studentData&&studentData.map((student) => (
-                    <option
-                      key={student.AdmissionNumber}
-                      value={student.AdmissionNumber}
-                      style={{marginTop:"5px"}}
-                    >
-                      {`${student.AdmissionNumber} - ${student.Name}`}
-                    </option>
-                  ))}
+                  {studentData &&
+                    studentData.map((student) => (
+                      <option
+                        key={student.AdmissionNumber}
+                        value={student.AdmissionNumber}
+                        style={{ marginTop: "5px" }}
+                      >
+                        {`${student.AdmissionNumber} - ${student.Name}`}
+                      </option>
+                    ))}
                 </select>
-                <button onClick={handleAddMember} className="bg-bgBlueDark p-4 text-md text-white rounded-xl hoverButtons">Add member</button>
+                <button
+                  onClick={handleAddMember}
+                  className="bg-bgBlueDark p-4 text-md text-white rounded-xl hoverButtons"
+                >
+                  Add member
+                </button>
               </div>
             )}
           </p>
@@ -252,10 +267,10 @@ function MyProject(props) {
     return cards;
   };
 
-  // console.log(projectData);
+  console.log(documentupdateRole.Student);
   return (
     <Layouts>
-      <div>
+      <div className="mt-10">
         <ToastContainer />
         <div className="text-center bg-bgBlueDark text-white text-3xl rounded-2xl p-2 relative">
           <h1>{projectData && projectData[0].ProjectID}</h1>
@@ -275,69 +290,99 @@ function MyProject(props) {
                 {projectData && projectData[0].Status}
               </p>
             </div>
-            {roleId === "Guide" &&
+            {(roleId === "Guide" || roleId === "Admin") &&
               projectData &&
+              projectData.length > 0 &&
               projectData[0].Status === "Pending" && (
-                <>
-                  <Approve
-                    projectId={projectData && projectData[0].ProjectID}
-                  />
-                </>
+                <Approve projectId={projectData[0].ProjectID} />
               )}
           </div>
         </div>
         <div className="flex flex-col md:flex-row lg:flex-row items-center w-full justify-around gap-20 mt-10">
           {renderCards()}
         </div>
-        <div>
-          <div className="flex m-10 justify-center items-center">
-            <div className="flex-1">
-              <div style={{ height: "2px" }} className="bg-gray-300"></div>
-            </div>
+        {documentupdateRole.Student === "Student" && (
+          <>
+            <div>
+              <div className="flex m-10 justify-center items-center">
+                <div className="flex-1">
+                  <div style={{ height: "2px" }} className="bg-gray-300"></div>
+                </div>
 
-            <div className="flex-0 ml-4 mr-4 font-bold">
-              <h2>Project Details</h2>
-            </div>
+                <div className="flex-0 ml-4 mr-4 font-bold">
+                  <h2>Project Details</h2>
+                </div>
 
-            <div className="flex-1">
-              <div style={{ height: "2px" }} className="bg-gray-300"></div>
-            </div>
-          </div>
+                <div className="flex-1">
+                  <div style={{ height: "2px" }} className="bg-gray-300"></div>
+                </div>
+              </div>
 
-          <div className="flex justify-center items-center">
-            {" "}
-            <div className="flex flex-col md:flex-row lg:flex-row justify-around items-center gap-4 w-5/6 ">
-              <button
-                className="w-full p-2 bg-bgBlueDark text-white rounded-xl"
-                onClick={() => handleAddClick(1)}
-              >
-                Add title and Abstract
-              </button>
-              <button className="w-full p-2 bg-bgBlueDark text-white rounded-xl" onClick={()=>handleAddClick(3)}>
-                Add PPT
-              </button>
-              <button className="w-full p-2 bg-bgBlueDark text-white rounded-xl" onClick={()=>handleAddClick(2)}>
-                Add Project Report
-              </button>
-              <button className="w-full p-2 bg-bgBlueDark text-white rounded-xl" onClick={()=>handleAddClick(4)}>
+              <div className="flex justify-center items-center">
                 {" "}
-                Project Link
-              </button>
+                <div className="flex flex-col md:flex-row lg:flex-row justify-around items-center gap-4 w-5/6 ">
+                  <button
+                    className="w-full p-2 bg-bgBlueDark text-white rounded-xl"
+                    onClick={() => handleAddClick(1)}
+                  >
+                    Add title and Abstract
+                  </button>
+                  <button
+                    className="w-full p-2 bg-bgBlueDark text-white rounded-xl"
+                    onClick={() => handleAddClick(3)}
+                  >
+                    Add PPT
+                  </button>
+                  <button
+                    className="w-full p-2 bg-bgBlueDark text-white rounded-xl"
+                    onClick={() => handleAddClick(2)}
+                  >
+                    Add Project Report
+                  </button>
+                  <button
+                    className="w-full p-2 bg-bgBlueDark text-white rounded-xl"
+                    onClick={() => handleAddClick(4)}
+                  >
+                    {" "}
+                    Project Link
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        {addClick === 1 && (
-          <AddTitle
-            onlick={handleAddTtile}
-            projectId={projectData && projectData[0].ProjectID}
-          />
+          </>
         )}
-        {addClick>1&&<>
-          <AddDocumentLink onlick={handleAddTtile} documentName={addClick===2?'ProjectReport':addClick===3?'ProjectPresentaion':'ProjectLink'} projectId={projectData && projectData[0].ProjectID}/>
-        </>}
-        <DocumentStatus projectId={userI} />
+        {documentupdateRole.Student === "Student" && (
+          <>
+            {addClick === 1 && (
+              <AddTitle
+                onlick={handleAddTtile}
+                projectId={projectData && projectData[0].ProjectID}
+              />
+            )}
 
-        {roleId === "Reveiwer" && <UpdateMarks projectId={userI} onlick={handleUpdateMarks}/>}
+            {addClick > 1 && (
+              <AddDocumentLink
+                onlick={handleAddTtile}
+                documentName={
+                  addClick === 2
+                    ? "ProjectReport"
+                    : addClick === 3
+                    ? "ProjectPresentaion"
+                    : "ProjectLink"
+                }
+                projectId={projectData && projectData[0].ProjectID}
+              />
+            )}
+          </>
+        )}
+
+        <DocumentStatus projectId={userI} />
+        <div className="mt-16">
+          {roleId === "Reveiwer" && (
+            //  <h1>{projectData &&  projectData[0].ProjectID}</h1>
+            <MarksDetails ProjectID={projectData && projectData[0].ProjectID} />
+          )}
+        </div>
       </div>
     </Layouts>
   );

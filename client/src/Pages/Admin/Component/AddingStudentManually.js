@@ -70,9 +70,8 @@ function AddingStudentManually(props) {
     {value:'B.Tech(ML)',label:'B.Tech(ML)'},
     {value:'BCA',label:'BCA'}
   ]
-console.log(studentData);
   return (
-    <div className="container mx-auto mt-8 bg-textColor1 text-black cardShadow rounded-md border upCard">
+    <div className="container p-4 mx-auto mt-8 bg-textColor1 text-black cardShadow rounded-md border upCard">
       <ToastContainer
         position="top-right"
         autoClose={5000}

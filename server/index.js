@@ -13,11 +13,12 @@ const Admin = require('./models/Admin')(sequelize);
 const Task = require('./models/Task')(sequelize);
 const Project = require('./models/ProjectList')(sequelize);
 const ProjectDocument = require('./models/ProjectDocument')(sequelize);
-
+const Guide = require('./models/Guide')(sequelize)
+const Marks = require('./models/Marks')(sequelize);
 const studentRoute = require('./routes/StudentRoutes');
 const TeacherRoute = require('./routes/TeacherRoutes');
 const ProjectRoute = require('./routes/ProjectRoutes');
-
+const MarksRoute = require('./routes/MarksRoute');
 const {authenticateUser,authorizeTeacher } = require('./middlewareAuthorization');
 const ProjectMember = require("./models/ProjectMember")(sequelize);
 const app = express();
@@ -145,6 +146,7 @@ app.use('/s',studentRoute);
 app.use('/t', TeacherRoute,);
 
 app.use('/projects', ProjectRoute,);
+app.use('/m', MarksRoute,);
 
 
 
