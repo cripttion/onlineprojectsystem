@@ -4,9 +4,10 @@ const cors = require("cors");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 
-const sequelize = require("./sequelize");
+const sequelize = require("./config/sequelize");
 const { Sequelize } = require("sequelize");
-
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 const Student = require("./models/StudentList")(sequelize);
 const Teacher = require("./models/Teacher")(sequelize);
 const Admin = require('./models/Admin')(sequelize);
@@ -15,7 +16,14 @@ const Project = require('./models/ProjectList')(sequelize);
 const ProjectDocument = require('./models/ProjectDocument')(sequelize);
 const Guide = require('./models/Guide')(sequelize)
 const Marks = require('./models/Marks')(sequelize);
+const Otp = require('./models/Otp')(sequelize);
+const ReviewerMarks = require('./models/ReviewerMarks')(sequelize);
+const GuideMarks = require('./models/GuideMarks')(sequelize);
 const studentRoute = require('./routes/StudentRoutes');
+const studentsRoute = require('./routes/StudentsRoute');
+const TeachersRoute = require('./routes/TeachersRoute');
+
+const AdminRoute = require('./routes/AdminRoutes');
 const TeacherRoute = require('./routes/TeacherRoutes');
 const ProjectRoute = require('./routes/ProjectRoutes');
 const MarksRoute = require('./routes/MarksRoute');
@@ -23,29 +31,25 @@ const {authenticateUser,authorizeTeacher } = require('./middlewareAuthorization'
 const ProjectMember = require("./models/ProjectMember")(sequelize);
 const app = express();
 const port =process.env.PORT||5000;
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
-
 // Use cookie-parser middleware to parse cookies
-app.use(cookieParser());
+// app.use(cookieParser());
 
-// Use express-session middleware to manage sessions
-app.use(
-  session({
-    secret: "#12332kasdfjo32kasdf123", // Change this to a secure secret key
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      secure: false, // Set to true if using HTTPS
-      maxAge: 3600000, // Session expiration time in milliseconds (1 hour in this example)
-    },
-  },
- )
-);
+// app.use(
+//   session({
+//     secret: "#12332kasdfjo32kasdf123", // Change this to a secure secret key
+//     resave: false,
+//     saveUninitialized: true,
+//     cookie: {
+//       secure: false, // Set to true if using HTTPS
+//       maxAge: 3600000, // Session expiration time in milliseconds (1 hour in this example)
+//     },
+//   },
+//  )
+// );
 
-// app.use(authenticateUser);
 
 
 
@@ -127,11 +131,13 @@ app.post('/login', async (req, res) => {
     }
 
     if (userData.Password === password) {
-      // Store user information in the session
-      // sessionStorage.setItem('role',role);
-      // req.session.user = { userId, role };
-      console.log(req.session);
-      res.status(200).json({ message: 'Login Successful', userData: userData, role: role });
+      
+      const token = jwt.sign({userData:userData,role:role},
+        process.env.SECRET_KEY,{
+          expiresIn:86400
+        }
+      )
+      res.status(200).json({ message: 'Login Successful',result:token});
     } else {
       res.status(201).json({ message: 'Password not matched' });
     }
@@ -140,9 +146,16 @@ app.post('/login', async (req, res) => {
   }
 });
 
-app.use('/s',studentRoute);
+app.use('/v1/admin',AdminRoute);
+app.use('/v1/student',studentsRoute)
+
+
+
+
+
 
 // Use authorizeTeacher middleware only for '/t' route
+app.use('/s',studentRoute);
 app.use('/t', TeacherRoute,);
 
 app.use('/projects', ProjectRoute,);

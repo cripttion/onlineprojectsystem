@@ -18,22 +18,7 @@ return sequelize.define('Marks', {
     type:DataTypes.STRING,
     allowNull:false,
   },
-  GuideMarksMTE:{
-    type:DataTypes.STRING,
-    allowNull:true,
-  },
-  ReviewerMarksMTE:{
-    type:DataTypes.STRING,
-    allowNull:true,
-  },
- GuideMarksFinal:{
-    type:DataTypes.STRING,
-    allowNull:true,
- },
- GuideMarksFinal:{
-    type:DataTypes.STRING,
-    allowNull:true,
- }
+  
 
   
 }, {

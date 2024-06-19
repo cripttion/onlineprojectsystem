@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const sequelize = require("./../sequelize");
+const sequelize = require("../config/sequelize");
 const { Sequelize, Op } = require("sequelize");
 
 const multer = require("multer");
@@ -18,11 +18,26 @@ const ProjectMember = require("./../models/ProjectMember")(sequelize);
 const Marks = require("./../models/Marks")(sequelize);
 
 router.post("/add-parameter", async (req, res) => {
-  const { ColumnName } = req.body;
+  const { ColumnName,role } = req.body;
   try {
-    await sequelize
+    if(role==="Guide"||role==="Admin")
+    {
+      await sequelize
       .query(
-        `ALTER TABLE Marks ADD COLUMN ${ColumnName} VARCHAR(200) DEFAULT "0";`
+        `ALTER TABLE GuideMarks ADD COLUMN ${ColumnName} VARCHAR(200) DEFAULT "0";`
+      )
+      .then(() => {
+        return res.status(201).json({ message: "Column added successfully" });
+      })
+      .catch((error) => {
+        return res.status(404).json({ error:error.message});
+      });
+    }
+    else if(role==='Reviewer'||role==='Admin')
+    {
+      await sequelize
+      .query(
+        `ALTER TABLE ReviewerMarks ADD COLUMN ${ColumnName} VARCHAR(200) DEFAULT "0";`
       )
       .then(() => {
         return res.status(201).json({ message: "Column added successfully" });
@@ -30,6 +45,8 @@ router.post("/add-parameter", async (req, res) => {
       .catch((error) => {
         return res.status(404).json({ error });
       });
+    }
+   return res.status(400).json({message:"unable to add the Column"});
   } catch (error) {
     res.status(500).json({ message: "Internal server Error" });
   }
@@ -39,12 +56,19 @@ router.delete("/remove-paramter/:ColumnName", async (req, res) => {
   const ColumnName = req.params.ColumnName;
   try {
     await sequelize
-      .query(`ALTER TABLE Marks DROP COLUMN ${ColumnName};`)
+      .query(`ALTER TABLE GuideMarks DROP COLUMN ${ColumnName};`)
       .then(() => {
         return res.status(200).json({ message: "Column deleted successfully" });
       })
-      .catch((error) => {
-        return res.status(404).json({ error });
+      .catch(async(error) => {
+        await sequelize
+        .query(`ALTER TABLE ReviewerMarks DROP COLUMN ${ColumnName};`)
+        .then(() => {
+          return res.status(200).json({ message: "Column deleted successfully" });
+        })
+        .catch((error) => {
+            res.status(404).json({message:"Unable to delete the parameter"})
+        });
       });
   } catch (error) {
     res.status(500).json({ message: "Internal server Error" });

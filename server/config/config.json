@@ -1,27 +1,26 @@
 {
   "development": {
-      "username": "root",
-      "password": "Admin@123",
-      "database": "studentportal",
-      "host": "127.0.0.1",
-      "dialect": "mysql",
-      "operators": false
+    "username": "root",
+    "password": "Admin@123",
+    "database": "studentportal",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "operators": false
   },
   "test": {
-    "username": "u9u1olnb1yztavcp",
-    "password": "kggPM5CdSe03E6nnQU6g",
-    "database": "b2fwy6gab0mbgbyii2uv",
-    "host": "b2fwy6gab0mbgbyii2uv-mysql.services.clever-cloud.com",
+    "username": "ucfvm9jiehqft3je",
+    "password": "QmuFSLjFQ7IY76R3yVGW",
+    "database": "bx1ebzfk80yw6ws21bh3",
+    "host": "bx1ebzfk80yw6ws21bh3-mysql.services.clever-cloud.com",
     "dialect": "mysql",
     "operators": false
   },
   "production": {
-    "username": "u9u1olnb1yztavcp",
-      "password": "kggPM5CdSe03E6nnQU6g",
-      "database": "b2fwy6gab0mbgbyii2uv",
-      "host": "b2fwy6gab0mbgbyii2uv-mysql.services.clever-cloud.com",
-      "dialect": "mysql",
-      "operators": false
+    "username": "root",
+    "password": "Admin@123",
+    "database": "studentportal",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "operators": false
   }
 }
-

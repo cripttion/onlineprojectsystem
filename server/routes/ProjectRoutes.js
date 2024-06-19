@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const sequelize = require("./../sequelize");
+const sequelize = require("../config/sequelize");
 const { Sequelize, Op } = require("sequelize");
 
 const multer = require("multer");
@@ -16,6 +16,8 @@ const Project = require("./../models/ProjectList")(sequelize);
 const Guide = require("./../models/Guide")(sequelize);
 const ProjectMember = require("./../models/ProjectMember")(sequelize);
 const Marks = require("./../models/Marks")(sequelize);
+const mailSender = require('./../utility/mailSender');
+const Otp = require('./../models/Otp')(sequelize);
 const isAbleToCreateProject = async (admissionNumber) => {
   try {
     const value = await ProjectMember.findAll({
@@ -49,7 +51,7 @@ const getLastProjectId = async (year, semester) => {
     const value = `BT${year}${semester}%`;
 
     const query = `
-      SELECT * FROM projects
+      SELECT * FROM Projects
       WHERE ProjectID LIKE :value
       ORDER BY CAST(SUBSTRING(ProjectID, 5) AS UNSIGNED) DESC
       LIMIT 1;`;
@@ -118,7 +120,7 @@ router.get("/allProjects", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-const create = async (year, semester, members, school) => {
+const create = async (year, semester, members, school,domain,outcome ) => {
   try {
     const tempValue = await getLastProjectId(year, semester);
 
@@ -137,6 +139,8 @@ const create = async (year, semester, members, school) => {
       Status: "Pending",
       Year: year,
       Semester: semester,
+      Domain:domain,
+      ProjectOutcome:outcome
     });
 
     const document = await ProjectDocument.create({
@@ -158,13 +162,13 @@ const create = async (year, semester, members, school) => {
 
 router.post("/create", async (req, res) => {
   try {
-    const { year, semester, admissionNumber, members, user } = req.body;
+    const { year, semester, admissionNumber, members, user,domain,outcome } = req.body;
     const extractedChars = admissionNumber.match(/[A-Z]+/)[0];
     const data = await isAbleToCreateProject(admissionNumber);
     if (data.length > 0) {
       throw new Error(`You are already registered with group id ${data}`);
     }
-    const tempValue = await create(year, semester, members, extractedChars);
+    const tempValue = await create(year, semester, members, extractedChars,domain,outcome);
 
     const marks = await Marks.create({
       ProjectID: tempValue,
@@ -187,41 +191,105 @@ router.post("/create", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+function generateOtp(){
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+router.post('/generate-otp',async(req,res)=>{
+  const {requestUser,Email} = req.body;
+  const otp = generateOtp();
+  try {
+      const resposne = await Otp.create({ Email: Email, Otp: otp });
+      const htmlQuery = `
+      <html>
+      <head>
+          <style>
+              body {
+                  font-family: Arial, sans-serif;
+                  text-align: center;
+              }
+              .container {
+                  margin: 20px auto;
+                  padding: 20px;
+                  border: 1px solid #ccc;
+                  max-width: 600px;
+              }
+              h1 {
+                  color:#50C878;
+                  font-style:italic;
+              }
+              
+          </style>
+      </head>
+      <body>
+          <div class="container">
+              <h1>Hello ${requestUser} is request you to add in the Project Group</h1>
+              <p>Your Code for approval is :</p>
+              <h2>${otp}</h2>
+          </div>
+      </body>
+      </html>
+  `;
+      const mailResponse = await mailSender(Email, "Your OTP for verification is ", htmlQuery);
 
+      if(resposne){
+        return  res.status(200).json({message:"OTP generatedSuccessfully"});
+      }
+      res.status(404).json({message:'Unable to create the OTP'});
+  } catch (error) {
+      console.error(error);
+      return 500;
+  }
+})
 router.post("/addStudnets/:projectID", async (req, res) => {
   const projectID = req.params.projectID;
-  const { admissionNumber, user } = req.body;
-  const data = await isAbleToCreateProject(admissionNumber);
-  if (data.length > 0) {
-    return res
-      .status(501)
-      .json({
+  const { admissionNumber, user, otp, email } = req.body;
+
+  try {
+    const OtpData = await Otp.findAll({
+      where: {
+        Email: email,
+        Otp: otp,
+      }
+    });
+
+    if (!OtpData || OtpData.length === 0) {
+      return res.status(400).json({ message: "Incorrect OTP" });
+    }
+
+    const data = await isAbleToCreateProject(admissionNumber);
+    if (data.length > 0) {
+      return res.status(501).json({
         message: "You are already registered with group id",
         projectId: data,
       });
-  }
- 
-  try {
+    }
+
+    // Perform project member creation after OTP verification and project check
     const marks = await Marks.create({
       ProjectID: projectID,
-      StudentID:admissionNumber,
-    
+      StudentID: admissionNumber,
     });
+
     const member = await ProjectMember.create({
       ProjectID: projectID,
       StudentID: admissionNumber,
-      Review1Marks:marks.dataValues.MarksID ,
-      Review2Makrs: "0",
+      Review1Marks: marks.dataValues.MarksID,
+      Review2Marks: "0",
       CurrentStatus: "registered by self",
       Addby: user,
-    }).then((member) => {
-      res.status(200).json({ message: "Student add successfully" });
     });
+
+    // If everything succeeds, destroy the OTP data
+    await OtpData[0].destroy();
+
+    res.status(200).json({ message: "Student added successfully" });
+
   } catch (error) {
     console.error("Error adding student:", error);
     res.status(404).json({ error: error });
   }
 });
+
 
 router.get("/pdSpecific", async (req, res) => {
   const userID = req.query.userID;
@@ -407,9 +475,9 @@ router.get("/projectData/:projectId", async (req, res) => {
   try {
     const data = await sequelize.query(
       "SELECT p.*, pm.*, s.Name, s.AdmissionNumber, s.Email, s.Phone " +
-        "FROM projectmembers AS pm " +
-        "JOIN projects AS p ON pm.ProjectID = p.ProjectID " +
-        "JOIN students AS s ON pm.StudentID = s.AdmissionNumber " +
+        "FROM ProjectMembers AS pm " +
+        "JOIN Projects AS p ON pm.ProjectID = p.ProjectID " +
+        "JOIN Students AS s ON pm.StudentID = s.AdmissionNumber " +
         "WHERE pm.ProjectID = :ProjectID;",
       {
         replacements: { ProjectID: projectId },
@@ -481,11 +549,12 @@ while (i < response.length) {
 router.get("/marks-parameter",async(req,res)=>{
 
   try{
-    const query = `desc Marks;`
+    const query = `desc GuideMarks;`
     const response = await sequelize.query(query,{type:sequelize.QueryTypes.SELECT});
-    
+    const query2 = `desc ReviewerMarks;`
+    const response2 = await sequelize.query(query2,{type:sequelize.QueryTypes.SELECT});
     if(response){
-     return  res.status(200).json({response});
+     return  res.status(200).json({response,response2});
     }
     res.status(404).json({message:"Unable to find the table details"});
   }catch(error)

@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const sequelize = require("./../sequelize");
+const sequelize = require("../config/sequelize");
 const { Sequelize, Op } = require("sequelize");
 
 const multer = require("multer");
@@ -181,8 +181,8 @@ router.get("/guide/:projectID", async (req, res) => {
 
   try {
     const query = `SELECT DISTINCT g.Name, g.TeacherID, g.Email, g.Phone, g.Position, g.school
-    FROM teachers AS g
-    JOIN guides AS gu ON gu.GuideID = g.TeacherID
+    FROM Teachers AS g
+    JOIN Guides AS gu ON gu.GuideID = g.TeacherID
     WHERE gu.projectID = :projectId;
     `;
 
@@ -235,9 +235,9 @@ router.get("/teacher-as-guide", async (req, res) => {
       t.Email as Email,
       t.Phone as Phone
   FROM
-      teachers t
+      Teachers t
   LEFT JOIN
-      guides g ON g.GuideID = t.TeacherID
+      Guides g ON g.GuideID = t.TeacherID
   GROUP BY
       t.TeacherID
       ORDER BY
@@ -265,9 +265,9 @@ router.get("/teacher-as-reviewer", async (req, res) => {
       t.Email as Email,
       t.Phone as Phone
   FROM
-      teachers t
+      Teachers t
   LEFT JOIN
-      guides g ON g.ReviewerID = t.TeacherID
+      Guides g ON g.ReviewerID = t.TeacherID
   GROUP BY
       t.TeacherID
       ORDER BY
@@ -338,8 +338,8 @@ router.get("/reviwer/:projectID", async (req, res) => {
 
   try {
     const query = `SELECT DISTINCT g.Name, g.TeacherID, g.Email, g.Phone, g.Position, g.school
-    FROM teachers AS g
-    JOIN guides AS gu ON gu.ReviewerID = g.TeacherID
+    FROM Teachers AS g
+    JOIN Guides AS gu ON gu.ReviewerID = g.TeacherID
     WHERE gu.projectID = :projectId;
     `;
 

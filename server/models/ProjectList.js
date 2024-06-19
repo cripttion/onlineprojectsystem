@@ -52,6 +52,14 @@ const Project = (sequelize) => {
         allowNull: false,
         defaultValue: "######",
       },
+      Domain: {
+        type: DataTypes.STRING,
+        defaultValue:'NA',
+      },
+      ProjectOutcome:{
+        type:DataTypes.STRING,
+        defaultValue:'True'
+      }
       
     },
     {
