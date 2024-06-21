@@ -4,10 +4,12 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Select from 'react-select';
 import YearSemester from './YearSemester'; // Import the YearSemester component
+import API_ENDPOINTS from '../../../NewVersion/Helper/ApiConfig';
+import { useSelector } from 'react-redux';
 
 function AddingStudentManually(props) {
   const role = props.role;
-  
+  const token = useSelector(state=>state.user.token);
   const [studentData, setStudentData] = useState({
     EnrollmentNumber: '',
     AdmissionNumber: '',
@@ -33,10 +35,14 @@ function AddingStudentManually(props) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const roleroute  = (role==='Student'?'s/studentDataUpload':'t/teacherDataUpload');
+    const roleroute  = (role==='Student'?API_ENDPOINTS.ADDSTUDENT:API_ENDPOINTS.ADDTEACHER);
     try {
       // Make an API request to save the student data
-      await axios.post(`http://localhost:5000/${roleroute}`, studentData);
+      await axios.post(roleroute, studentData,{
+        headers: {
+          "Content-Type": "application/json",
+          "x-access-token":token
+        }});
       toast.success('Student added successfully!');
       setStudentData({
         EnrollmentNumber: '',
@@ -83,7 +89,7 @@ function AddingStudentManually(props) {
         draggable
         pauseOnHover
       />
-      <h2 className="text-2xl font-bold pt-2 mb-4 flex justify-center">Add Data Manually</h2>
+      <h2 className="text-2xl font-bold  mb-4 flex justify-center">Add Data Manually</h2>
       <form onSubmit={handleSubmit} className="w-full mx-auto">
         <div className='flex flex-wrap flex-col md:flex-row lg:flex-row xl:flex-row justify-around'>
          {role==='Student' && <label className="block mb-4">
@@ -125,13 +131,14 @@ function AddingStudentManually(props) {
             />
           </label>
 
+          
+      
+       
+        {role==='Student'&&<><label className="block mb-4 w-60">
           <YearSemester
         studentData={studentData}
         setStudentData={setStudentData}
       />
-      
-       
-        {role==='Student'&&<><label className="block mb-4 w-60">
             <span className="text-gray-700">Course:</span>
             <Select
               required
@@ -229,7 +236,7 @@ function AddingStudentManually(props) {
             <span className="text-gray-700"></span>
             <button
               type="submit"
-              className="bg-bgBlueDark mb-4 text-textColor1  buttonShadow hover:bg-hoverButton font-semibold tracking-wider mt-1 w-60 h-12 rounded-md"
+              className="bg-bgBlue mb-4 text-white  buttonShadow hover:bg-hoverButton font-semibold tracking-wider mt-1 w-60 h-12 rounded-md"
             >
               Add {role}
             </button>

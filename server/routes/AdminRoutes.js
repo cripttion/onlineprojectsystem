@@ -22,6 +22,14 @@ const addParameterToGuideMakrs = require("../controller/AdminController/Marks/Ad
 const addParameterToMakrs = require("../controller/AdminController/Marks/AddFiledInMakrs");
 const getMakrsByProjectID = require("../controller/AdminController/Marks/GetMakrsByProjectID");
 const { updateMarksTable, updateGuideTable, updateReviewerTable } = require("../controller/AdminController/Marks/UpdateMarksByProjectID");
+const AddNewGuide = require("../controller/AdminController/Project/Guide/AddGuide");
+const addNewReviewer = require("../controller/AdminController/Project/Reviewer/AddReviewer");
+const getReviewerOfProjectByID = require("../controller/AdminController/Project/Reviewer/GetReviewerDetails");
+const getguideDetailsById = require("../controller/AdminController/Project/Guide/GetGuideDetails");
+const AddStudentToProjectGroup = require("../controller/AdminController/Project/AddStudentToProject");
+const getStudentByProjectID = require("../controller/AdminController/Project/GetStudnetByProjectID");
+const ProjectTOguides = require("../controller/AdminController/Project/Guide/ProjectToGuides");
+const ProjectAllocatedTOReviewer = require("../controller/AdminController/Project/Reviewer/ProjectTOReviewer");
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
@@ -32,7 +40,7 @@ router.get('/allStudents',AdminAuth,allStudentData);
 router.post('/addStudent',AdminAuth,addStudent);
 router.put('/updateStudent/:admissionNumber',AdminAuth,UpdateStudentData);
 router.delete('/deleteStudentRecord/:admissionNumber',AdminAuth,deleteStudentData);
-router.get('/unregisteredStudent',AdminAuth,notRegisteredStudent);
+router.post('/unregisteredStudent',AdminAuth,notRegisteredStudent);
 
 //------------------------------ Teacher Related Routes --------------------------------//
 router.get('/allTeacher',AdminAuth,getAllTeacherData);
@@ -47,15 +55,21 @@ router.delete('/removestudnetFromPrj/:admissionNumber',AdminAuth,deleteStudentFr
 router.post('/createProjectGroup',AdminAuth,createGroupForProject);
 
 router.post('/allocateLeftStudent',AdminAuth,allocateRemaningStudentToGroup);
-
-
+router.post('/project/addNewGuide',AdminAuth,AddNewGuide);
+router.post('/project/addNewReviewer',AdminAuth,addNewReviewer)
+router.get('/project/getReviewer/:projectID',AdminAuth,getReviewerOfProjectByID);
+router.get('/project/getGuide/:projectID',AdminAuth,getguideDetailsById)
+router.post('/project/addStudent/:projectID',AdminAuth,AddStudentToProjectGroup)
+router.get('/project/getStudent/:projectID',AdminAuth,getStudentByProjectID)
+router.get('/project/projectToGuides',AdminAuth,ProjectTOguides);
+router.get('/project/projectToReviewer',AdminAuth,ProjectAllocatedTOReviewer);
 //----------------------------Marks Related routes ----------------------------////
 router.post('/marks/addreviewerParameter',AdminAuth,addParameterToReviewerMakrs);
 router.post('/marks/addGuideParamter',AdminAuth,addParameterToGuideMakrs);
 router.post('/marks/addMarksParamter',AdminAuth,addParameterToMakrs);
 
 router.get('/marks/ProjectMarks/:projectID',AdminAuth,getMakrsByProjectID);
-router.put('/makrs/updateMarksTable',AdminAuth,updateMarksTable);
+router.put('/marks/updateMarksTable',AdminAuth,updateMarksTable);
 router.put('/marks/updateGuideTable',AdminAuth,updateGuideTable);
 router.put('/marks/updateReviewerTable',AdminAuth,updateReviewerTable);
 module.exports = router;

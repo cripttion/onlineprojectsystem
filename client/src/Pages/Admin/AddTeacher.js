@@ -4,7 +4,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import FetchedStudentData from './Component/FetchedStudent';
 import AddingStudentManually from './Component/AddingStudentManually';
-import Layouts from '../../Layouts/Layouts';
+import AdminLayout from '../../NewVersion/NewLayout/AdminLayout';
 import {downloadExcel} from './../../utility/DataFunction';
 
 const AddTeacher = () => {
@@ -113,7 +113,7 @@ downloadExcel(excelFormatData);
   };
 
   return (
-    <Layouts>
+    <AdminLayout>
       <div>
       <ToastContainer />
 
@@ -139,11 +139,11 @@ downloadExcel(excelFormatData);
 
         {/* Show and Upload Buttons */}
         <div className="flex space-x-4 flex-row justify-between items-center">
-            <button onClick={handleDownloadFormat} className="bg-button buttonShadow text-textColor hover:bg-hoverButton w-full rounded-md shadow-lg hover:shadow-2xl px-4 py-2">
+            <button onClick={handleDownloadFormat} className="bg-bgBlue buttonShadow text-white hover:bg-hoverButton w-full rounded-md shadow-lg hover:shadow-2xl px-4 py-2">
               Download Format
             </button>
             <button
-              className="bg-button buttonShadow text-textColor hover:bg-hoverButton w-full rounded-md shadow-lg hover:shadow-2xl px-4 py-2"
+              className="bg-bgBlue buttonShadow text-white hover:bg-hoverButton w-full rounded-md shadow-lg hover:shadow-2xl px-4 py-2"
               onClick={handleUploadClick}
             >
               {loading ? "Uploading..." : "Upload to Database"}
@@ -172,7 +172,7 @@ downloadExcel(excelFormatData);
       {/* Rest of your component */}
       <FetchedStudentData role='Teacher' />
       </div>
-    </Layouts>
+    </AdminLayout>
   );
 };
 

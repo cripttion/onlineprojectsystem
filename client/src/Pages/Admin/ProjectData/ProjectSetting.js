@@ -10,6 +10,7 @@ import DocumentStatus from '../../Student/Components/DocumentStatus';
 import MarksDetails from './components/MarksDetails';
 import AddGuide from './components/AddGuide';
 import AddReviewer from './components/AddReviewer';
+import AdminLayout from './../../../NewVersion/NewLayout/AdminLayout'
 function ProjectSetting() {
     const { projectID } = useParams();
     const [data, setData] = useState([]);
@@ -134,7 +135,7 @@ const getReviewerData = async ()=>{
   }
   console.log(reveiwerDetailsClick);
     return (
-        <Layouts >
+        <AdminLayout>
             <ToastContainer />
             <div className='mt-10'>
                 <h2 className='text-center font-bold text-3xl'>{projectID}</h2>
@@ -295,7 +296,7 @@ const getReviewerData = async ()=>{
                <h2 className='text-red-500 mt-10 flex flex-row items-center gap-2'><MessageSquareWarningIcon />Data Not found or Click any of the above button</h2>
              </>}
             </div>
-        </Layouts>
+        </AdminLayout>
     )
 }
 

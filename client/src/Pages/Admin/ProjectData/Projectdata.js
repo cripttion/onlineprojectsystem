@@ -5,6 +5,7 @@ import axios from "axios";
 import YearSemester from "../Component/YearSemester";
 import Select from "react-select";
 import * as XLSX from "xlsx";
+import AdminLayout from './../../../NewVersion/NewLayout/AdminLayout'
 function Projectdata() {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
@@ -29,18 +30,21 @@ function Projectdata() {
     } catch (error) {
       console.log("Error while fetching data");
     }
+    finally{
+      setSearchFilter({
+        //here year and semester will come form year and semester component
+        Year: "",
+        Semester: "",
+        course: "",
+        branch: "",
+      })
+    }
   };
 
 
-  // console.log("The vlue",reviewer);
-
-  // const findReviewerById = (reviewerId) => {
-
-  //   return reviewer[reviewerId];
-  // };
   const handleShowClick = (pID) => {
     console.log(pID);
-    navigate(`/projects/${pID}`, {
+    navigate(`/admin/ProjectGroup/${pID}`, {
       state: { ProjectId: pID, xtemp: "pData" },
     });
   };
@@ -76,7 +80,7 @@ function Projectdata() {
     XLSX.writeFile(workbook, "ProjectData.xlsx");
   };
   return (
-    <Layouts>
+    <AdminLayout>
       <div className="container mx-auto px-4 mt-8">
         <form onSubmit={handleSubmit} className="flex flex-wrap gap-10 justify-center items-center">
           <YearSemester
@@ -131,54 +135,57 @@ function Projectdata() {
               }}
             />
           </label>
-          <button type="submit" className="bg-blue-500 text-white py-1 px-2 rounded-md h-fit">
+          <button type="submit" className="bg-bgBlue text-white py-2 px-4 rounded-md h-fit mt-3">
             Get Project Data
           </button>
         </form>
         
-        <button className="bg-blue-500 text-white py-1 px-2 rounded-md" onClick={() => downloadExcel(data.projects)}>Download As Excel</button>
-        <div className="flex flex-row mt-5 gap-4">
-          <input className="outline-none p-2 border-gray-300 border rounded-xl" type="text" placeholder="Serach:ProjectID" onChange={(e)=>setProjectID(e.target.value.toUpperCase())} />
-          <button className="bg-blue-700 p-2 text-white rounded-xl" onClick={()=>navigate(`/projects/${projectID}`)}>Search</button>
+        <div className="flex flex-row mt-5 gap-4 items-center justify-between">
+          <div className="flex flex-row gap-4 items-center">
+          <input className="outline-none p-2 border-gray-300 border rounded-md" type="text" placeholder="Serach:ProjectID" onChange={(e)=>setProjectID(e.target.value.toUpperCase())} />
+          <button className="bg-bgBlue p-2 text-white rounded-md" onClick={()=>navigate(`/admin/ProjectGroup/${projectID}`)}>Search</button>
+          </div>
+          <button className="bg-bgBlue text-white py-1 px-2 rounded-md" onClick={() => downloadExcel(data.projects)}>Download As Excel</button>
+
         </div>
         <div className="overflow-auto" style={{ maxHeight: "70vh" }}>
         <table className="min-w-full max-h-screen bg-white border border-gray-300 mt-10">
           <thead>
             <tr>
-              <th className="py-2 px-4 border-b text-left">SN</th>
-              <th className="py-2 px-4 border-b text-left">ProjectID</th>
-              <th className="py-2 px-4 border-b text-left">Name</th>
-              <th className="py-2 px-4 border-b text-left">Phone</th>
-              <th className="py-2 px-4 border-b text-left">Email</th>
-              <th className="py-2 px-4 border-b text-left">
+              <th className="border border-gray-300 px-4 py-2">SN</th>
+              <th className="border border-gray-300 px-4 py-2">ProjectID</th>
+              <th className="border border-gray-300 px-4 py-2">Name</th>
+              <th className="border border-gray-300 px-4 py-2">Phone</th>
+              <th className="border border-gray-300 px-4 py-2">Email</th>
+              <th className="border border-gray-300 px-4 py-2">
                 SupervisorDetails
               </th>
-              <th className="py-2 px-4 border-b text-left">ProjectTitle</th>
+              <th className="border border-gray-300 px-4 py-2">ProjectTitle</th>
 
-              <th className="py-2 px-4 border-b text-left">Action</th>
+              <th className="border border-gray-300 px-4 py-2">Action</th>
             </tr>
           </thead>
           <tbody>
             {data?.projects?.map((prData, index) => {
               return (
                 <tr key={index}>
-                  <td className="py-2 px-4 border-b text-left">{index + 1}</td>
-                  <td className="py-2 px-4 border-b text-left">
+                  <td className="border border-gray-300 px-4 py-2">{index + 1}</td>
+                  <td className="border border-gray-300 px-4 py-2">
                     {prData.ProjectID}
                   </td>
                   {/* <td className="py-2 px-4 border-b text-left">
                     {prData.superviorName}
                   </td> */}
-                  <td className="py-2 px-4 border-b text-left">
+                  <td className="border border-gray-300 px-4 py-2">
                     {prData.Name + " - "+prData.AdmissionNumber}
                   </td>
-                  <td className="py-2 px-4 border-b text-left">
+                  <td className="border border-gray-300 px-4 py-2">
                     {prData.Phone}
                   </td>
-                  <td className="py-2 px-4 border-b text-left">
+                  <td className="border border-gray-300 px-4 py-2">
                     {prData.Email}
                   </td>
-                  <td className="py-2 px-4 border-b text-left">
+                  <td className="border border-gray-300 px-4 py-2">
                     {prData.superviorName +
                       " - " +
                       prData.SupervisorID +
@@ -191,13 +198,13 @@ function Projectdata() {
                       " - " +
                       prData.SupervisorCabin}
                   </td>
-                  <td className="py-2 px-4 border-b text-left">
+                  <td className="border border-gray-300 px-4 py-2">
                     {prData.ProjectTitle}
                   </td>
-                  <td className="py-2 px-4 border-b text-left">
+                  <td className="border border-gray-300 px-4 py-2">
                     <button
                       onClick={() => handleShowClick(prData.ProjectID)}
-                      className="bg-blue-500 text-white py-1 px-2 rounded-md"
+                      className="bg-bgBlue text-white py-1 px-2 rounded-md"
                     >
                       Show
                     </button>
@@ -209,7 +216,7 @@ function Projectdata() {
         </table>
         </div>
       </div>
-    </Layouts>
+    </AdminLayout>
   );
 }
 

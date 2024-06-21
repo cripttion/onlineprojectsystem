@@ -165,18 +165,18 @@ export default function FetchedStudentData(props) {
   };
 
   return (
-    <div className="w-full mx-auto mt-16 ">
+    <div className="mx-auto mt-16 ">
       {isLoading && <Loader />}
       <center>
         <div
-          className="flex justify-center text-md pt-4 pb-4  text-textColor1 bg-bgBlueDark w-fit p-2 rounded-md hover:cursor-pointer hover:bg-textGray"
+          className="flex justify-center text-md pt-4 pb-4  text-white bg-bgBlue w-fit p-2 rounded-md hover:cursor-pointer hover:bg-textGray"
           onClick={handleClick}
         >
           {" "}
           Show List
         </div>
       </center>
-      <div className="mb-4 mt-4 flex justify-start md:justify-end xl:justify-end lg:justify-end mr-2">
+      <div className="mb-4 mt-4 flex  md:justify-end xl:justify-end lg:justify-end mr-2">
         {showClicked && (
           <div className="flex flex-col md:flex-row lg:flex-row xl:flex-row items-center mb-2">
             <div className="mb-4 md:mb-0 lg:mb-0 xl:mb-0">
@@ -188,7 +188,7 @@ export default function FetchedStudentData(props) {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
               <button
-                className="bg-button text-textColor buttonShadow hover:bg-hoverButton tracking-wider py-2 mr-4 px-4 rounded-md"
+                className="bg-bgBlue text-white buttonShadow hover:bg-hoverButton tracking-wider py-2 mr-4 px-4 rounded-md"
                 onClick={handleSearch}
               >
                 Search
@@ -196,13 +196,13 @@ export default function FetchedStudentData(props) {
             </div>
             <div className=" flex justify-between">
               <button
-                className="bg-button text-textColor buttonShadow hover:bg-hoverButton tracking-wider py-2 px-4 rounded-md"
+                className="bg-bgBlue text-white buttonShadow hover:bg-hoverButton tracking-wider py-2 px-4 rounded-md"
                 onClick={handleToggleFilterAlphabetically}
               >
                 {isFiltered ? "Clear Filter" : "Sort by Name"}
               </button>
               <button
-                className="bg-button text-textColor buttonShadow hover:bg-hoverButton tracking-wider py-2 px-4 rounded-md ml-4 mr-4"
+                className="bg-bgBlue text-white buttonShadow hover:bg-hoverButton tracking-wider py-2 px-4 rounded-md ml-4 mr-4"
                 onClick={handleRefreshData}
               >
                 Refresh Data
@@ -212,39 +212,39 @@ export default function FetchedStudentData(props) {
         )}
       </div>
       {showClicked && (
-        <div className="overflow-auto max-h-screen m-2">
-          <table className="min-w-full bg-white shadow-md rounded-md">
+        <div className="overflow-x-scroll max-h-screen m-2">
+          <table className=" bg-white border border-gray-300 rounded-lg">
             <thead>
-              <tr className="bg-color1 text-black">
-                <th className="py-3 px-4 text-left">Action</th>
-                <th className="py-3 px-4 text-left">S.N.</th>
+              <tr className="bg-gray-100">
+                <th className="border border-gray-300 px-4 py-2">Action</th>
+                <th className="border border-gray-300 px-4 py-2">S.N.</th>
                 {role === "Teacher" && (
                   <>
                     {" "}
-                    <th className="py-3 px-4 text-left">TeacherID.</th>
+                    <th className="border border-gray-300 px-4 py-2">TeacherID.</th>
                   </>
                 )}
                 {role === "Student" && (
                   <>
-                    <th className="py-3 px-4 text-left">Enrollment No.</th>
-                    <th className="py-3 px-4 text-left">Admission No.</th>
+                    <th className="border border-gray-300 px-4 py-2">Enrollment No.</th>
+                    <th className="border border-gray-300 px-4 py-2">Admission No.</th>
                   </>
                 )}
-                <th className="py-3 px-4 text-left">Name</th>
+                <th className="border border-gray-300 px-4 py-2">Name</th>
                 {role === "Student" && (
                   <>
-                    <th className="py-3 px-4 text-left">Branch</th>
-                    <th className="py-3 px-4 text-left">Year</th>
-                    <th className="py-3 px-4 text-left">Semester</th>
+                    <th className="border border-gray-300 px-4 py-2">Branch</th>
+                    <th className="border border-gray-300 px-4 py-2">Year</th>
+                    <th className="border border-gray-300 px-4 py-2">Semester</th>
                   </>
                 )}
-                <th className="py-3 px-4 text-left">Email</th>
+                <th className="border border-gray-300 px-4 py-2">Email</th>
 
                 {role === "Teacher" && (
                   <>
-                    <th className="py-3 px-4 text-left">Phone</th>
-                    <th className="py-3 px-4 text-left">Cabin</th>
-                    <th className="py-3 px-4 text-left">Position</th>
+                    <th className="border border-gray-300 px-4 py-2">Phone</th>
+                    <th className="border border-gray-300 px-4 py-2">Cabin</th>
+                    <th className="border border-gray-300 px-4 py-2">Position</th>
                   </>
                 )}
               </tr>
@@ -255,11 +255,11 @@ export default function FetchedStudentData(props) {
                   key={index}
                   className={
                     index % 2 === 0
-                      ? "bg-blue-100 even:bg-blue-50"
-                      : "odd:bg-gray-200"
+                      ? "border border-gray-300 px-4 py-2"
+                      : "border border-gray-300 px-4 py-2"
                   }
                 >
-                    <td className="py-2 px-4 flex flex-wrap gap-4">
+                    <td className="border border-gray-300 px-4 py-2">
                     {editingIndex === index ? (
                       <>
                         <button
@@ -293,23 +293,23 @@ export default function FetchedStudentData(props) {
                       </div>
                     )}
                   </td>
-                  <td className="py-2 px-4">{index + 1}</td>
+                  <td className="border border-gray-300 px-4 py-2">{index + 1}</td>
                   {role === "Teacher" && (
                     <>
                       {" "}
-                      <td className="py-2 px-4">{data.TeacherID}</td>
+                      <td className="border border-gray-300 px-4 py-2">{data.TeacherID}</td>
                     </>
                   )}
                   {role === "Student" && (
                     <>
-                      <td className="py-2 px-4">{data.EnrollmentNumber}</td>
-                      <td className="py-2 px-4">{data.AdmissionNumber}</td>
+                      <td className="border border-gray-300 px-4 py-2">{data.EnrollmentNumber}</td>
+                      <td className="border border-gray-300 px-4 py-2">{data.AdmissionNumber}</td>
                     </>
                   )}
-                  <td className="py-2 px-4">
+                  <td className="border border-gray-300 px-4 py-2">
                     {editingIndex === index ? (
                       <input
-                        className="bg-gray-500 outline text-white border-black p-2"
+                        className="border border-gray-300 px-4 py-2"
                         type="text"
                         value={editedData.Name}
                         onChange={(e) => handleChange(e, "Name")}
@@ -320,10 +320,10 @@ export default function FetchedStudentData(props) {
                   </td>
                   {role === "Student" && (
                     <>
-                      <td className="py-2 px-4">
+                      <td className="border border-gray-300 px-4 py-2">
                         {editingIndex === index ? (
                           <input
-                          className="bg-gray-500 outline text-white border-black p-2"
+                          className="border border-gray-300 px-4 py-2"
 
                             type="text"
                             value={editedData.Branch}
@@ -333,10 +333,10 @@ export default function FetchedStudentData(props) {
                           data.Branch
                         )}
                       </td>
-                      <td className="py-2 px-4">
+                      <td className="border border-gray-300 px-4 py-2">
                         {editingIndex === index ? (
                           <input
-                          className="bg-gray-500 outline text-white border-black p-2"
+                          className="border border-gray-300 px-4 py-2"
 
                             type="text"
                             value={editedData.Year}
@@ -346,10 +346,10 @@ export default function FetchedStudentData(props) {
                           data.Year
                         )}
                       </td>
-                      <td className="py-2 px-4">
+                      <td className="border border-gray-300 px-4 py-2">
                         {editingIndex === index ? (
                           <input
-                          className="bg-gray-500 outline text-white border-black p-2"
+                          className="border border-gray-300 px-4 py-2 w-fit"
 
                             type="text"
                             value={editedData.Semester}
@@ -361,11 +361,11 @@ export default function FetchedStudentData(props) {
                       </td>
                     </>
                   )}
-                  <td className="py-2 px-4">
+                  <td className="border border-gray-300 px-4 py-2">
                     {editingIndex === index ? (
                       <input
                         type="text"
-                        className="bg-gray-500 outline text-white border-black p-2"
+                        className="border border-gray-300 px-4 py-2"
 
                         value={editedData.Email}
                         onChange={(e) => handleChange(e, "Email")}
@@ -381,7 +381,7 @@ export default function FetchedStudentData(props) {
                     {editingIndex === index ? (
                       <input
                         type="text"
-                        className="bg-gray-500 outline text-white border-black p-2"
+                        className="border border-gray-300 px-4 py-2"
 
                         value={editedData.Phone}
                         onChange={(e) => handleChange(e, "Phone")}
@@ -390,11 +390,11 @@ export default function FetchedStudentData(props) {
                       data.Phone
                     )}
                   </td>
-                  <td className="py-2 px-4">
+                  <td className="border border-gray-300 px-4 py-2">
                     {editingIndex === index ? (
                       <input
                         type="text"
-                        className="bg-gray-500 outline text-white border-black p-2"
+                        className="border border-gray-300 px-4 py-2"
 
                         value={editedData.Cabin}
                         onChange={(e) => handleChange(e, "Cabin")}
@@ -403,11 +403,11 @@ export default function FetchedStudentData(props) {
                       data.Cabin
                     )}
                   </td>
-                  <td className="py-2 px-4">
+                  <td className="border border-gray-300 px-4 py-2">
                     {editingIndex === index ? (
                       <input
                         type="text"
-                        className="bg-gray-500 outline text-white border-black p-2"
+                        className="border border-gray-300 px-4 py-2"
 
                         value={editedData.Position}
                         onChange={(e) => handleChange(e, "Email")}

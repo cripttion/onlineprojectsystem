@@ -11,8 +11,11 @@ import DocumentStatus from "./Components/DocumentStatus";
 import UpdateMarks from "../Teacher/Components/UpdateMarks";
 import AddDocumentLink from "./Components/AddDocumentLink";
 import MarksDetails from "../Admin/ProjectData/components/MarksDetails";
+import Loading from "../../Components/loading/Loading";
+import StudentLayout from './../../NewVersion/Pages/Student/StudentLayout/Layout'
 import Swal from "sweetalert2";
 function MyProject(props) {
+ 
   const navigate = useNavigate();
   const documentupdateRole = useParams();
   const location = useLocation();
@@ -20,9 +23,10 @@ function MyProject(props) {
   const userData = sessionStorage.getItem("sessionData");
   const [isClicked, setIsClicked] = useState(false);
   const [selectedAdmissionNumber, setSelectedAdmissionNumber] = useState("");
-
+  const [isLoading,setIsLoading] = useState(false);
   // const [roleId,setRoleID] = useState("");
-
+  const[Otpbox,setOptBox] = useState(false);
+  const[Otp,setOtp] =useState("");
   const [addClick, setaddClick] = useState();
   const handleSelectChange = (event) => {
     setSelectedAdmissionNumber(event.target.value);
@@ -88,19 +92,48 @@ function MyProject(props) {
 
     getProjectData();
   }, [userI]);
-
+const handleOtpgeneration = async ()=>{
+  if (sessionStorage.getItem("role")!== "Student") {
+    return Swal.fire("You are not allowed to add student", "", "error");
+  }
+  try{
+    setIsLoading(true);
+    const filteredData = studentData.filter(item => item.AdmissionNumber === selectedAdmissionNumber);
+    const response  = await axios.post('http://localhost:5000/projects/generate-otp',{
+      requestUser:admissionNumber.data[0].Name,
+      Email:filteredData[0].Email,
+      // Email:"raj@rycientech.online"
+    })
+    if(response.status===200)
+    {
+      setIsLoading(false);
+      toast.success(`OTP sent on Email ${filteredData[0].Email} `);
+       setOptBox(true);
+    }
+  }catch(error)
+  {
+     console.log(error);
+     Swal.fire("Something went wroing while sending OTP","","warning");
+  }finally{
+    setIsLoading(false);
+  }
+}
   const handleAddMember = async () => {
-    if (roleId !== "Student") {
+   
+    if (sessionStorage.getItem("role")!== "Student") {
       return Swal.fire("You are not allowed to add student", "", "error");
     }
     try {
-      // Replace with the actual admission number
-
+      // Replace with the actual admission num  ber
+      const filteredData = studentData.filter(item => item.AdmissionNumber === selectedAdmissionNumber);
       const response = await axios.post(
         `http://localhost:5000/projects/addStudnets/${projectData[0].ProjectID}`,
         {
           admissionNumber: selectedAdmissionNumber,
           user: admissionNumber.data[0].Name,
+          otp:Otp,
+          email:filteredData[0].Email,
+          // email:"raj@rycientech.online"
         },
         {
           headers: {
@@ -108,6 +141,7 @@ function MyProject(props) {
           },
         }
       );
+     
       setSelectedAdmissionNumber("");
       setIsClicked(false);
       const updatedProjectData = await axios.get(
@@ -124,7 +158,12 @@ function MyProject(props) {
       // Reset the form or any other state if needed
     } catch (error) {
       // Handle errors
-      console.error("Error adding member:", error);
+      if(error.response.status===400)
+      {
+        setOtp("");
+        toast.error("Incorrect OTP!");
+      }
+      // console.error("Error adding member:", error);
     }
   };
   const handleAddTtile = async (data) => {
@@ -142,7 +181,8 @@ function MyProject(props) {
       setaddClick(0);
       setprojectData(updatedProjectData.data.data);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+       Swal.fire("Unable to add","","error");
     }
   };
   const handleUpdateMarks = async (data) => {
@@ -159,7 +199,8 @@ function MyProject(props) {
 
       setprojectData(updatedProjectData.data.data);
     } catch (error) {
-      console.log(error);
+      Swal.fire("Unable to add","","error");
+
     }
   };
 
@@ -172,7 +213,8 @@ function MyProject(props) {
       );
       setStudentData(response.data.data);
     } catch (error) {
-      console.log("error");
+      Swal.fire("Unable to add","","error");
+
     }
     const newClickedCards = [...clickedCards];
     newClickedCards[index] = !newClickedCards[index]; // Toggle the clicked state
@@ -243,12 +285,31 @@ function MyProject(props) {
                       </option>
                     ))}
                 </select>
-                <button
+                {!Otpbox&&<button
+                  onClick={handleOtpgeneration}
+                  className="bg-bgBlueDark p-4 text-md text-white rounded-xl hoverButtons"
+                >
+                  Ask concent
+                </button>}
+                
+                {isLoading?(<>
+                  <Loading />
+                </>):(Otpbox&&<>
+                  <input
+                    type="text"
+                    placeholder="concent code"
+                    className="w-full p-3 outline-none border border-gray-400 upCard text-center"
+                    style={{letterSpacing:'1rem'}}
+                    value={Otp}
+                    onChange={(e)=>setOtp(e.target.value)}
+                  />
+                  <button
                   onClick={handleAddMember}
                   className="bg-bgBlueDark p-4 text-md text-white rounded-xl hoverButtons"
                 >
                   Add member
                 </button>
+                </>)}
               </div>
             )}
           </p>
@@ -267,9 +328,8 @@ function MyProject(props) {
     return cards;
   };
 
-  console.log(documentupdateRole.Student);
   return (
-    <Layouts>
+    <StudentLayout>
       <div className="mt-10">
         <ToastContainer />
         <div className="text-center bg-bgBlueDark text-white text-3xl rounded-2xl p-2 relative">
@@ -384,7 +444,7 @@ function MyProject(props) {
           )}
         </div>
       </div>
-    </Layouts>
+    </StudentLayout>
   );
 }
 

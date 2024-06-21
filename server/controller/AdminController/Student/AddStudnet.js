@@ -57,17 +57,19 @@ const addStudent = async(req,res)=>{
               
               if (!student) {
                 return res.status(400).json({ message: "something went wrong" });
+              }else{
+                res.status(200).json({ message: "Data uploaded successfully" });
+
               }
               // if (!created) {
               //   console.log(`Entry with enrollment number ${row.enrollmentNumber} already exists. Skipping.`);
               // }
             } catch (error) {
-                return res.status(402).json({message:"Error while Adding Studnet",error})
+                return res.status(400).json({message:"Error while Adding Studnet",error:error.message})
             }
           })
         );
     
-        res.json({ message: "Data uploaded successfully" });
       } catch (error) {
         console.error("Error adding students:", error);
         res.status(500).json({ error: "Internal Server Error" });

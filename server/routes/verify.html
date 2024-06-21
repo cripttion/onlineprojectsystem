@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #50C878;
+            font-style: italic;
+        }
+        p {
+            font-size: 16px;
+            color: #333333;
+            margin-bottom: 30px;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            width: 80%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 20px;
+            font-size: 16px;
+            color: #ffffff;
+            background-color: #50C878;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #45a163;
+        }
+        .error {
+            color: red;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Verify Your Request</h1>
+        <p>Please enter your Admission number to verify your request to join the project group.</p>
+        <input type="text" id="admission-number" placeholder="Enter your Admission number" />
+        <div id="error-message" class="error"></div>
+        <button class="btn" onclick="verifyAdmissionNumber()">Verify Now</button>
+    </div>
+
+    <script>
+        async function verifyAdmissionNumber() {
+            const admissionNumber = document.getElementById('admission-number').value;
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.textContent = '';
+
+            if (!admissionNumber) {
+                errorMessage.textContent = 'Please enter your Admission number.';
+                return;
+            }
+
+            // Extract projectID from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            console.log(urlParams);
+            const projectID = urlParams.get('projectID');
+
+            if (!projectID) {
+                errorMessage.textContent = 'Project ID is missing in the URL.';
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:5000/v1/student/addStudentToGroup/${projectID}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        admissionNumber,
+                        user: 'Team member'
+                     })
+                });
+
+                if (response.ok) {
+                    alert('You have been successfully added to the project group!');
+                } else {
+                    const errorData = await response.json();
+                    errorMessage.textContent = errorData.message || 'An error occurred. Please try again.';
+                }
+            } catch (error) {
+                errorMessage.textContent = 'An error occurred. Please try again.';
+            }
+        }
+    </script>
+</body>
+</html>

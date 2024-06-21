@@ -39,7 +39,7 @@ function DocumentStatus(props) {
     getProjectData();
     // getData();
   },[])
-  console.log(data);
+  // console.log(data);
   const onViewFile=(value)=>{
     window.open(value, '_blank', 'noreferrer');
   }

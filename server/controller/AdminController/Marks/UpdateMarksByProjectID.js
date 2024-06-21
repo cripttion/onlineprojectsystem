@@ -35,7 +35,8 @@ const updateReviewerTable = async (req, res) => {
     try {
         const response = await Marks.findOne({
             where: {
-                ProjectID: projectID
+                ProjectID: projectID,
+                StudentID:StudentID
             }
         });
         console.log(response);
@@ -66,7 +67,7 @@ const updateReviewerTable = async (req, res) => {
 
 
 const updateGuideTable = async (req, res) => {
-    const { projectID, guideMarks } = req.body;
+    const { projectID, guideMarks,StudentID } = req.body;
     if (!projectID || !guideMarks) {
         return res.status(400).json({ error: "Missing required fields" });
     }
@@ -74,7 +75,8 @@ const updateGuideTable = async (req, res) => {
     try {
         const response = await Marks.findOne({
             where: {
-                ProjectID: projectID
+                ProjectID: projectID,
+                StudentID:StudentID
             }
         });
        

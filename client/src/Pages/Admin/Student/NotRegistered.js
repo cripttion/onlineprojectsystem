@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { studentNotRegistered } from "../../../utility/DataFunction";
 import YearSemester from "../Component/YearSemester";
-import Layouts from "../../../Layouts/Layouts";
+import AdminLayout from './../../../NewVersion/NewLayout/AdminLayout';
 import { downloadExcel } from "../../../utility/DataFunction";
 import { ToastContainer, toast } from "react-toastify";
 import Loading from "../../../Components/loading/Loading";
@@ -69,7 +69,7 @@ function NotRegistered() {
   };
 
   return (
-    <Layouts>
+    <AdminLayout>
       <ToastContainer />
       {isClicked2 && (
         <div className="fixed w-full lg:-mx-20 -mx-2 h-screen bg-black bg-opacity-25 flex flex-col gap-10 justify-center items-center">
@@ -85,7 +85,7 @@ function NotRegistered() {
             studentData={searchFilter}
             setStudentData={setSearchFilter}
           />
-          <div className="bg-blue-700 w-fit text-white p-2 mt-2 rounded-xl border-none">
+          <div className="bg-bgBlue w-fit text-white p-2 mt-2 rounded-md border-none">
             <button onClick={getData}>Show List</button>
           </div>
         </div>
@@ -103,7 +103,7 @@ function NotRegistered() {
             {notRegistered.length > 0 && (
               <div className="flex flex-row gap-2 justify-between ">
                 <button
-                  className="bg-blue-700 text-white mt-5 py-1 px-2 rounded-md"
+                  className="bg-bgBlue text-white mt-5 py-1 px-2 rounded-md"
                   onClick={() => downloadExcel(notRegistered)}
                 >
                   Download As Excel
@@ -138,7 +138,7 @@ function NotRegistered() {
                     <option value="4">4</option>
                   </select>
                   <button
-                    className="bg-blue-700 text-white  py-1 px-2 rounded-md"
+                    className="bg-bgBlue text-white  py-1 px-2 rounded-md"
                     onClick={handleNotRegistered}
                   >
                     Create Group For Not Registered
@@ -151,25 +151,25 @@ function NotRegistered() {
                 <table className="min-w-full bg-white border border-gray-300 mt-10 overflow-x-auto">
                   <thead>
                     <tr>
-                      <th className="py-2 px-4 border-b text-left">SN</th>
-                      <th className="py-2 px-4 border-b text-left">Name</th>
-                      <th className="py-2 px-4 border-b text-left">Phone</th>
-                      <th className="py-2 px-4 border-b text-left">Email</th>
+                      <th className="border border-gray-300 px-4 py-2">SN</th>
+                      <th className="border border-gray-300 px-4 py-2">Name</th>
+                      <th className="border border-gray-300 px-4 py-2">Phone</th>
+                      <th className="border border-gray-300 px-4 py-2">Email</th>
                     </tr>
                   </thead>
                   <tbody>
                     {notRegistered.map((prData, index) => (
                       <tr key={index}>
-                        <td className="py-2 px-4 border-b text-left">
+                        <td className="border border-gray-300 px-4 py-2">
                           {index + 1}
                         </td>
-                        <td className="py-2 px-4 border-b text-left">
+                        <td className="border border-gray-300 px-4 py-2">
                           {prData.Name + " - " + prData.AdmissionNumber}
                         </td>
-                        <td className="py-2 px-4 border-b text-left">
+                        <td className="border border-gray-300 px-4 py-2">
                           {prData.Phone}
                         </td>
-                        <td className="py-2 px-4 border-b text-left">
+                        <td className="border border-gray-300 px-4 py-2">
                           {prData.Email}
                         </td>
                       </tr>
@@ -181,7 +181,7 @@ function NotRegistered() {
           </div>
         )}
       </div>
-    </Layouts>
+    </AdminLayout>
   );
 }
 
